@@ -26,6 +26,16 @@ public class AuthService {
 
     @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
+        //signupRequest의 email 값이 없을 때, passwordEncoder의
+        //encode() 동작이 불필요하게 일어나지 않게 코드를 개선해주세요.
+        //궁금한점 @NotBlank는 " " 도 ""도 null도 안된다고 한다. 그렇다면 Request의 email에 @NotBlank가 있다면 어디서 예외처리가 생기는가
+        //일단 3가지를 확인해봐야함 null인경우 ""인경우 " "인경우
+        //null인경우는 쉽고 ""와 " "인경우는 문자열을 .trim()으로 공백을 제거한후 isEmpty() 메서드로 비어있는가를 확인해보면된다.
+
+        if(signupRequest.getEmail()==null||signupRequest.getEmail().trim().isEmpty()) {
+            throw new NullPointerException("Email is null or empty");
+        }
+
 
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
