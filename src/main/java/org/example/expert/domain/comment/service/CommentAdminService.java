@@ -2,6 +2,7 @@ package org.example.expert.domain.comment.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.expert.domain.comment.repository.CommentRepository;
+import org.example.expert.domain.common.dto.AuthUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +13,7 @@ public class CommentAdminService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public void deleteComment(long commentId) {
+    public void deleteComment(AuthUser authUser, long commentId) {
         commentRepository.deleteById(commentId);
     }
 }

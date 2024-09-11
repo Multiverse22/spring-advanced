@@ -35,8 +35,11 @@ public class ManagerService {
         User user = User.fromAuthUser(authUser);
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new InvalidRequestException("Todo not found"));
-
-        if (!ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
+        //두 객체가 둘다 Null인지 확인하는 메서드이다. 둘다 null이면 true를 반환하지만
+        //둘 중에 하나가 null이 아니면 equal 메서드를 수행한다.
+        //기존 코드는 todo.getUser().getId() 였다 문제는 user가 null인경우에는 .getId()를 하는순가 NPE가 발생했다.
+        //때문에 todo.getUser()가 null인지를 확인하는 코드로 수정하면 정상적으로 작동한다.
+        if (!ObjectUtils.nullSafeEquals(user, todo.getUser())) {
             throw new InvalidRequestException("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.");
         }
 
