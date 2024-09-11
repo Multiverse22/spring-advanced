@@ -39,7 +39,10 @@ public class ManagerService {
         //둘 중에 하나가 null이 아니면 equal 메서드를 수행한다.
         //기존 코드는 todo.getUser().getId() 였다 문제는 user가 null인경우에는 .getId()를 하는순가 NPE가 발생했다.
         //때문에 todo.getUser()가 null인지를 확인하는 코드로 수정하면 정상적으로 작동한다.
-        if (!ObjectUtils.nullSafeEquals(user, todo.getUser())) {
+        if (todo.getUser()==(null)) {
+            throw new InvalidRequestException("일정에 담당자가 존재하지 않습니다.");
+        }
+        if (!ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
             throw new InvalidRequestException("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.");
         }
 

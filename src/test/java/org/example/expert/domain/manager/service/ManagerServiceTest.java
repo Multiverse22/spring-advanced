@@ -24,7 +24,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class ManagerServiceTest {
@@ -49,11 +51,33 @@ class ManagerServiceTest {
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> managerService.getManagers(todoId));
         assertEquals("Todo not found", exception.getMessage());
     }
+    @Test
+    public void 존재하지_않는_managerId로_manager_save하기() {
+        //given
+        long todoId = 1L;
+        AuthUser authUser = new AuthUser(1L, "a@a.com", UserRole.USER);
+        User user = User.fromAuthUser(authUser);
+        ReflectionTestUtils.setField(user,"id",1L);
+
+        Todo todo = new Todo("title","contents","weather",user);
+        ReflectionTestUtils.setField(todo,"id",1L);
+
+        long managerId = 1L;
+        //given(managerRepository.findById(managerId)).willReturn(Optional.empty());
+        given(todoRepository.findById(todoId)).willReturn(Optional.of(todo));
+        ManagerSaveRequest managerSaveRequest = new ManagerSaveRequest(managerId);
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class,()->managerService.saveManager(authUser,todoId,managerSaveRequest));
+
+        assertEquals("등록하려고 하는 담당자 유저가 존재하지 않습니다.", exception.getMessage());
+
+    }
 
     @Test
     void todo의_user가_null인_경우_예외가_발생한다() {
         // given
-        AuthUser authUser = new AuthUser(1L, "a@a.com", UserRole.USER);
+        long userId = 1L;
+        AuthUser authUser = new AuthUser(userId, "a@a.com", UserRole.USER);
         long todoId = 1L;
         long managerUserId = 2L;
 
@@ -69,7 +93,7 @@ class ManagerServiceTest {
             managerService.saveManager(authUser, todoId, managerSaveRequest)
         );
 
-        assertEquals("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.", exception.getMessage());
+        assertEquals("일정에 담당자가 존재하지 않습니다.", exception.getMessage());
     }
 
     @Test // 테스트코드 샘플
