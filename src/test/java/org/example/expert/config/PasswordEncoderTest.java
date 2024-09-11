@@ -20,7 +20,8 @@ class PasswordEncoderTest {
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
         // when
-        boolean matches = passwordEncoder.matches(encodedPassword, rawPassword);
+        boolean matches = passwordEncoder.matches(rawPassword,encodedPassword);
+        //로우패스워드와 암호화된패스워드의 인수자리가 바뀌어있던 사소한오류수정
 
         // then
         assertTrue(matches);
