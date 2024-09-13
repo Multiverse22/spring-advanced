@@ -28,6 +28,12 @@ public class CommentService {
 
     @Transactional
     public CommentSaveResponse saveComment(AuthUser authUser, long todoId, CommentSaveRequest commentSaveRequest) {
+        if(authUser==null) {
+            throw new InvalidRequestException("user is null");
+        }
+        if(commentSaveRequest.getContents()==null) {
+            throw new InvalidRequestException("comment Contents is null");
+        }
         User user = User.fromAuthUser(authUser);
         Todo todo = todoRepository.findById(todoId).orElseThrow(() ->
                 new InvalidRequestException("Todo not found"));

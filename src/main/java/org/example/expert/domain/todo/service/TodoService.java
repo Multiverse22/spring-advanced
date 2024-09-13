@@ -30,7 +30,7 @@ public class TodoService {
         User user = User.fromAuthUser(authUser);
 
         String weather = weatherClient.getTodayWeather();
-
+        todoSaveRequestIsOk(todoSaveRequest,weather);
         Todo newTodo = new Todo(
                 todoSaveRequest.getTitle(),
                 todoSaveRequest.getContents(),
@@ -79,5 +79,17 @@ public class TodoService {
                 todo.getCreatedAt(),
                 todo.getModifiedAt()
         );
+    }
+
+    public void todoSaveRequestIsOk(TodoSaveRequest todoSaveRequest,String weather) {
+        if (todoSaveRequest.getTitle() == null) {
+            throw new InvalidRequestException("Title is required");
+        }
+        if (todoSaveRequest.getContents() == null) {
+            throw new InvalidRequestException("Contents is required");
+        }
+        if (weather == null) {
+            throw new InvalidRequestException("Weather is required");
+        }
     }
 }
